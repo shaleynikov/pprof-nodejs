@@ -153,7 +153,9 @@ describe('CPU Profiler', () => {
       // verifySampleType(profile, 2, 'wall/nanoseconds');
       verifyPeriodType(profile, 'cpu/nanoseconds');
 
-      assert.strictEqual(profile.period, 1000 / 99);
+      // 1 second = 1e9 nanoseconds
+      // 99Hz interval equals 1e9 / 99 nanoseconds
+      assert.strictEqual(profile.period, 1e9 / 99);
       assert.ok(profile.durationNanos! > 0);
       assert.ok(profile.timeNanos! > 0);
 
@@ -188,6 +190,18 @@ describe('CPU Profiler', () => {
         second.timeNanos! >= (first.timeNanos! as number) + minimumDuration
       );
       assert.ok(second.durationNanos! >= minimumDuration);
+      cpu.stop();
+    });
+
+    it('should have correct perod value', async () => {
+      const wait = 100;
+      const cpu = new CpuProfiler();
+      // starting 100hz
+      cpu.start(100);
+      await busyWait(wait);
+      const profile = cpu.profile()!;
+      // 100 Hz === 10000000 Nanosecods
+      assert.ok(profile.period === 1e9 / 100);
       cpu.stop();
     });
   });

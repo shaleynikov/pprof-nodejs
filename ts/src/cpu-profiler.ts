@@ -96,7 +96,7 @@ export default class CpuProfiler extends NativeCpuProfiler {
       targetNode = timeProfile.topDownRoot;
     }
 
-    const intervalMicros = 1000 / (this.frequency as number);
+    const intervalMicros = 1e6 / (this.frequency as number); // microsecond = 1 / 1000 0000 Hz
     return serializeCpuProfile(timeProfile, intervalMicros);
   }
 }
